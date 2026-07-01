@@ -1,4 +1,8 @@
 # Databricks notebook source
+# /// script
+# [tool.databricks.environment]
+# environment_version = "5"
+# ///
 landing_path = "/Volumes/workspace/olist-landing-zone/landing-zone"
 
 # COMMAND ----------
@@ -27,17 +31,18 @@ arquivos
 # COMMAND ----------
 
 nome_tabelas = {
-    'olist_customers_dataset.csv': 'customers',
-    'olist_geolocation_dataset.csv': 'geolocation',
-    'olist_order_items_dataset.csv': 'order_items',
-    'olist_order_payments_dataset.csv': 'order_payments',
-    'olist_order_reviews_dataset.csv': 'order_reviews',
-    'olist_orders_dataset.csv': 'orders',
-    'olist_products_dataset.csv': 'products',
-    'olist_sellers_dataset.csv': 'sellers',
-    'product_category_name_translation.csv': 'product_category_name_translation'
+    'product_category_name_translation.csv':    'product_category_name_translation'
+    ,'olist_customers_dataset.csv':             'customers'
+    ,'olist_geolocation_dataset.csv':           'geolocation'
+    ,'olist_order_items_dataset.csv':           'order_items'
+    ,'olist_order_payments_dataset.csv':        'order_payments'
+    ,'olist_order_reviews_dataset.csv':         'order_reviews'
+    ,'olist_orders_dataset.csv':                'orders'
+    ,'olist_products_dataset.csv':              'products'
+    ,'olist_sellers_dataset.csv':               'sellers'
 }
 
+nome_tabelas
 
 # COMMAND ----------
 
@@ -49,7 +54,10 @@ for arquivo, tabela in nome_tabelas.items():
         f"{landing_path}/{arquivo}",
         header=True,
         inferSchema=False,
-        sep=","
+        sep=",",
+        quote='"',
+        escape='"',
+        multiLine=True
     )
 
     df_bronze = df_land.withColumn("ts_proc", current_timestamp())
@@ -58,11 +66,3 @@ for arquivo, tabela in nome_tabelas.items():
         .format("delta") \
         .mode("overwrite") \
         .saveAsTable(f"workspace.`olist-bronze`.{tabela}")
-
-# COMMAND ----------
-
-# MAGIC %sql
-# MAGIC
-# MAGIC SELECT * 
-# MAGIC FROM `olist-bronze`.customers
-# MAGIC LIMIT 100
