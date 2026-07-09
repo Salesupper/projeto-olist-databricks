@@ -34,14 +34,6 @@ df_geolocation_silver.write \
 
 # COMMAND ----------
 
-# MAGIC %sql
-# MAGIC
-# MAGIC SELECT DISTINCT geolocation_city
-# MAGIC FROM workspace.`olist-prata`.geolocation 
-# MAGIC
-
-# COMMAND ----------
-
 df_order_items = spark.table("`olist-bronze`.order_items")
 
 df_order_items_silver = (
@@ -121,12 +113,6 @@ df_order_reviews_silver.write \
 
 # COMMAND ----------
 
-# MAGIC %sql
-# MAGIC SELECT count(*), Count(DISTINCT order_id)
-# MAGIC FROM workspace.`olist-bronze`.orders
-
-# COMMAND ----------
-
 df_orders = spark.table("workspace.`olist-bronze`.orders")
 
 df_orders_silver = (
@@ -200,3 +186,20 @@ df_products_silver.write \
     .format('delta') \
     .mode('overwrite') \
     .saveAsTable("workspace.`olist-prata`.products")
+
+# COMMAND ----------
+
+tables = [
+    "product_category_name_translation",
+    "customers",
+    "sellers"
+]
+
+for table in tables:
+    (
+        spark.table(f"workspace.`olist-bronze`.{table}")
+        .write 
+        .format('delta') 
+        .mode('overwrite') 
+        .saveAsTable(f"workspace.`olist-prata`.{table}")
+    )

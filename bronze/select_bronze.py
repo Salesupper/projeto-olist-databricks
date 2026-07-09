@@ -9,7 +9,7 @@ for tabela in spark.sql("SHOW TABLES IN `olist-bronze`").collect():
 
     nome = tabela.tableName
 
-    df_select = spark.table(f"`olist-bronze`.{nome}").limit(1000)
+    df_select = spark.table(f"`olist-bronze`.{nome}").limit(100)
 
     dfs.append((nome, df_select))
 
